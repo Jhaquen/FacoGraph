@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="module" src="/javascripts/index.js"></script>
+  </head>
+  <body>
+    <div class="graph"></div>
+    <div class="input">
+      <input type="text" name="text" id="textinput_1" class="yinput" index="0">
+      <input type="text" name="text" id="textinput_2" class="yinput" index="1">
+      <input type="text" name="text" id="textinput_3" class="yinput" index="2">
+      <button type="button" id="enterbutton">enter</button>
+      <select name="range" id="rangeselect">
+        <option value="200">200</option>
+        <option value="400">400</option>
+        <option value="600">600</option>
+      </select>
+    </div>
+    <div class="test">
+      <svg viewBox="0 0 100 100" width="200px" height="200px">
+        <path d="M 0 0 C 10 10 10 10 20 10 C 20 20 20 20  40 20" stroke="black" fill="none" />
+      </svg>
+    </div>
+  </body>
+</html>
