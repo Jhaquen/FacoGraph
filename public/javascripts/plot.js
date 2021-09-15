@@ -305,8 +305,8 @@ class Plot{
         }
         this.g.append(axis.Component)
         this.g.append(axisend.Component)
-        this.lines.forEach(el=>{ this.g.append(el.svg) })
-        this.points.forEach(el=>{ el.svg.forEach(e=>this.g.append(e)) })
+        this.lines.forEach(el=>{ this.g.append(el.Component) })
+        this.points.forEach(el=>{ el.Component.forEach(e=>this.g.append(e)) })
         this.g.append(this.curve.Component)
 
         //calculations for later use
