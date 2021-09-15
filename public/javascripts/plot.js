@@ -88,7 +88,7 @@ class Dot {
         }
     }
 
-    get svg() {
+    get Component() {
         return [this.dpBoundingBox,this.datapoint]
     }
 
@@ -202,7 +202,7 @@ class Path {
         }
     }
     
-    get svg() {
+    get Component() {
         return this.path
     }
 
@@ -303,11 +303,11 @@ class Plot{
         for (let line in linepoints) {
             this.lines.push(new Path(linepoints[line],this.colors[line],0.2,[0.3,0.3],"none",false,true))
         }
-        this.g.append(axis.svg)
-        this.g.append(axisend.svg)
+        this.g.append(axis.Component)
+        this.g.append(axisend.Component)
         this.lines.forEach(el=>{ this.g.append(el.svg) })
         this.points.forEach(el=>{ el.svg.forEach(e=>this.g.append(e)) })
-        this.g.append(this.curve.svg)
+        this.g.append(this.curve.Component)
 
         //calculations for later use
         let pointYvals = []
@@ -368,7 +368,7 @@ class Plot{
             [final[0]+distancePercX, percY]
         ]
         let newLine = new Path(newLineData,this.colors[lineindex],0.2,"none","none",false,true)
-        this.g.append(newLine.svg)
+        this.g.append(newLine.Component)
         this.newLines.push(newLine)
         newLine.startUp()
         if (this.dataPointAdded == undefined) {
@@ -454,7 +454,7 @@ class Plot{
         else if (param == "min") { return undefined }
     }
 
-    get svg(){
+    get Component(){
         return this.g
     }
     
