@@ -88,7 +88,7 @@ class Dot {
         }
     }
 
-    get svg() {
+    get Component() {
         return [this.dpBoundingBox,this.datapoint]
     }
 
@@ -107,11 +107,12 @@ class Dot {
 
 class Path {
     
-    constructor(points,stroke,width,dash,fill,bezier,anim){
+    constructor(points,id,stroke,width,dash,fill,bezier,anim){
         this.points = points; this.fill = fill!=undefined?fill:"none"; this.bezier = bezier!=undefined?bezier:false
         this.anim = anim!=undefined?anim:false
         this.calc_d()
         this.attrs = {
+            id:id,
             d:this.d, 
             stroke:stroke!=undefined?stroke:"none", 
             "stroke-width":width!=undefined?width:"none", 
@@ -202,7 +203,7 @@ class Path {
         }
     }
     
-    get svg() {
+    get Component() {
         return this.path
     }
 
@@ -223,20 +224,43 @@ function setAttributes(element,attrs) {
 
 class Plot{
 
-    constructor(width,height,data,title) {
+    constructor(width,height,data,props) {
         this.width = width
         this.height = height
         this.data = data
-        this.title = title
+        this.props = props
         this.plotrange = 400
 
         ////////////////////////////////////////
         //create svg element
         //
+        this.gcontainer = document.createElement("div")
+        this.gcontainer.setAttribute("id","gContainer")
+
         this.g = document.createElementNS("http://www.w3.org/2000/svg","svg")
         this.viewBoxWidth = parseInt(this.width.replace(/\D/g,"")) / parseInt(this.height.replace(/\D/g,"")) * 100
         setAttributes(this.g,{"width":this.width,"height":this.height,"viewBox":`0 0 ${this.viewBoxWidth} 100`,"class":"g"})
+
+        this.rangeSelector = document.createElement("select")
+        setAttributes(this.rangeSelector,{"name":"selector","id":"dataRangeSelector"})
+        this.ranges = [200,400,600]
+        this.rangeSelectorOptions = {}
+        for (let range of this.ranges) {
+            let option = document.createElement("option")
+            option.setAttribute("value",range)
+            option.innerHTML = range
+            this.rangeSelectorOptions[range] = option
+            this.rangeSelector.append(option)
+        }
+        this.rangeSelector.onchange = () => {
+            this.updateRange(this.rangeSelector.value)
+            this.startUp()
+        }
+        
+        this.gcontainer.addEventListener("hover",this.hover)
         this.graph()
+        this.gcontainer.append(this.g)
+        this.gcontainer.append(this.rangeSelector)
     }
     
     graph(){
@@ -297,17 +321,19 @@ class Plot{
             }
             curvepoints.push( [point.x, point.y.reduce((a,b)=>a+b,0) / point.y.length]) // mean value
         }
-        let axis = new Path([[0,99],[0.99*this.viewBoxWidth,99]],"black",0.3)
-        let axisend = new Path([[0.99*this.viewBoxWidth,99.1],[0.99*this.viewBoxWidth,98.9],[0.992*this.viewBoxWidth,99]],"black",1,"none","black")
-        this.curve = new Path(curvepoints,"black",0.4,"none","none",false,true)
+        let axis = new Path([[0,99],[0.99*this.viewBoxWidth,99]],"GraphAxis","black",0.3)
+        let axisend = new Path([[0.99*this.viewBoxWidth,99.1],[0.99*this.viewBoxWidth,98.9],[0.992*this.viewBoxWidth,99]],"GraphAxisEnd","black",1,"none","black")
+        this.curve = new Path(curvepoints,"GraphLineMain","black",0.4,"none","none",false,true)
         for (let line in linepoints) {
-            this.lines.push(new Path(linepoints[line],this.colors[line],0.2,[0.3,0.3],"none",false,true))
+            this.lines.push(new Path(linepoints[line],`GraphLine${line}`,this.colors[line],0.2,[0.3,0.3],"none",false,true))
         }
-        this.g.append(axis.svg)
-        this.g.append(axisend.svg)
-        this.lines.forEach(el=>{ this.g.append(el.svg) })
-        this.points.forEach(el=>{ el.svg.forEach(e=>this.g.append(e)) })
-        this.g.append(this.curve.svg)
+        if (this.props.axes.x) {
+            this.g.append(axis.Component)
+            this.g.append(axisend.Component)
+        }
+        this.lines.forEach(el=>{ this.g.append(el.Component) })
+        this.points.forEach(el=>{ el.Component.forEach(e=>this.g.append(e)) })
+        this.g.append(this.curve.Component)
 
         //calculations for later use
         let pointYvals = []
@@ -367,8 +393,8 @@ class Plot{
             [final[0], final[1]],
             [final[0]+distancePercX, percY]
         ]
-        let newLine = new Path(newLineData,this.colors[lineindex],0.2,"none","none",false,true)
-        this.g.append(newLine.svg)
+        let newLine = new Path(newLineData,"newLine",this.colors[lineindex],0.2,"none","none",false,true)
+        this.g.append(newLine.Component)
         this.newLines.push(newLine)
         newLine.startUp()
         if (this.dataPointAdded == undefined) {
@@ -449,13 +475,17 @@ class Plot{
         }
     }
 
+    hover() {
+        console.log("hover")
+    }
+
     updateYFunc(yval,currentOffset,newRange,param) {
         if (param == "max") { return ((yval-currentOffset)/newRange)*(this.Ymax-currentOffset-newRange) }
         else if (param == "min") { return undefined }
     }
 
-    get svg(){
-        return this.g
+    get Component(){
+        return this.gcontainer
     }
     
 }
