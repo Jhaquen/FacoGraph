@@ -489,5 +489,3 @@ class Plot{
     }
     
 }
-
-export { Plot as default }
