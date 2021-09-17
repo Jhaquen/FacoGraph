@@ -6,3 +6,30 @@ body {
 a {
   color: #00B7FF;
 }
+
+#GraphLineMain {
+  stroke:#00B7FF;
+}
+
+#GraphLine1 {
+  stroke: black;
+}
+
+#gContainer {
+  transition: 0.1s linear;
+}
+
+#gContainer:hover {
+  background-color: rgba(192, 192, 192, 0.452);
+  border-radius: 10px;
+}
+
+#dataRangeSelector {
+  opacity: 0%;
+  transition: 0.1s linear;
+}
+
+#gContainer:hover #dataRangeSelector {
+  opacity: 100%;
+}
+

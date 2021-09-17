@@ -13,8 +13,13 @@ $(()=>{
         {x:550,y:[100,243,142]},
         {x:700,y:[232,523,122]}
     ]
-    let g = new Plot("800px","500px",data,"graph title")
-    graphdiv.append(g.svg)
+    let config = {
+        axes:{
+            x:false
+        }
+    }
+    let g = new Plot("800px","500px",data,config)
+    graphdiv.append(g.Component)
     g.startUp()
     graphdiv.addEventListener("mousemove",(event)=>{
         if (event.buttons==1) {
